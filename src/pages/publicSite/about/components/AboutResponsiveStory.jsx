@@ -4,16 +4,25 @@ import {
   useState,
 } from "react";
 import {
+  useInView,
   useReducedMotion,
 } from "motion/react";
 
 import aboutHero from "../../../../assets/about/about-hero.webp";
 import aboutStoryMobileMp4 from "../../../../assets/about/about-story-mobile.mp4";
+import aboutStoryMobileReverseMp4 from "../../../../assets/about/about-story-mobile-reverse.mp4";
+import aboutStoryMobileReverseWebm from "../../../../assets/about/about-story-mobile-reverse.webm";
 import aboutStoryMobileWebm from "../../../../assets/about/about-story-mobile.webm";
 import aboutStoryTabletMp4 from "../../../../assets/about/about-story-tablet.mp4";
+import aboutStoryTabletReverseMp4 from "../../../../assets/about/about-story-tablet-reverse.mp4";
+import aboutStoryTabletReverseWebm from "../../../../assets/about/about-story-tablet-reverse.webm";
 import aboutStoryTabletWebm from "../../../../assets/about/about-story-tablet.webm";
 import { ABOUT_CONTENT } from "../aboutContent.js";
-import { connectAboutVideoScroll } from "../utils/aboutVideoScroll.js";
+import {
+  connectAboutDirectionalScrollGate,
+  getAboutStoryEntryDirection,
+} from "../utils/aboutDirectionalScrollGate.js";
+import { connectAboutVideoPlayback } from "../utils/aboutVideoPlayback.js";
 
 function getInitialTabletMatch() {
   return typeof window !== "undefined" &&
@@ -27,14 +36,20 @@ function getInitialResponsiveViewportMatch() {
 
 function AboutResponsiveStory() {
   const reduceMotion = useReducedMotion();
-  const trackRef = useRef(null);
+  const stageRef = useRef(null);
   const videoRef = useRef(null);
+  const wasInViewRef = useRef(false);
+  const inView = useInView(stageRef, {
+    amount: 0.9,
+  });
   const [isTablet, setIsTablet] = useState(getInitialTabletMatch);
   const [viewportEnabled, setViewportEnabled] = useState(
     getInitialResponsiveViewportMatch,
   );
   const [videoFailed, setVideoFailed] = useState(false);
+  const [videoCompleted, setVideoCompleted] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
+  const [playbackDirection, setPlaybackDirection] = useState(null);
 
   useEffect(() => {
     const tabletQuery = window.matchMedia("(min-width: 768px)");
@@ -64,81 +79,134 @@ function AboutResponsiveStory() {
 
   useEffect(() => {
     setVideoFailed(false);
+    setVideoCompleted(false);
     setVideoReady(false);
   }, [isTablet]);
 
-  const scrollScrubEnabled =
-    viewportEnabled && !reduceMotion && !videoFailed;
+  const shouldPlay =
+    viewportEnabled &&
+    inView &&
+    playbackDirection !== null &&
+    !reduceMotion &&
+    !videoFailed &&
+    !videoCompleted;
 
   useEffect(() => {
     const video = videoRef.current;
-    const track = trackRef.current;
-    if (!video || !track || !scrollScrubEnabled) {
-      video?.pause();
+    if (!video) return undefined;
+
+    if (!shouldPlay) {
+      video.pause();
       return undefined;
     }
 
-    return connectAboutVideoScroll(video, track);
-  }, [isTablet, scrollScrubEnabled]);
+    return connectAboutVideoPlayback(video);
+  }, [isTablet, shouldPlay]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    const enteredStory = !wasInViewRef.current && inView;
+    const leftStory = wasInViewRef.current && !inView;
+
+    if (enteredStory) {
+      const stage = stageRef.current;
+      setPlaybackDirection(
+        stage ? getAboutStoryEntryDirection(stage) : "forward",
+      );
+      setVideoCompleted(false);
+      setVideoReady(false);
+    }
+
+    if (video && leftStory && !videoCompleted) {
+      video.pause();
+
+      try {
+        video.currentTime = 0;
+      } catch {
+        // Safari can reject seeking until metadata is ready. Playback still
+        // starts from the beginning when no current time was established.
+      }
+    }
+
+    if (leftStory) setPlaybackDirection(null);
+
+    wasInViewRef.current = inView;
+  }, [inView, videoCompleted]);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage || !shouldPlay) return undefined;
+
+    return connectAboutDirectionalScrollGate(
+      stage,
+      playbackDirection,
+    );
+  }, [playbackDirection, shouldPlay]);
 
   const showStaticAlternative = reduceMotion || videoFailed;
+  const reversePlayback = playbackDirection === "reverse";
   const mp4Source = isTablet
-    ? aboutStoryTabletMp4
-    : aboutStoryMobileMp4;
+    ? reversePlayback
+      ? aboutStoryTabletReverseMp4
+      : aboutStoryTabletMp4
+    : reversePlayback
+      ? aboutStoryMobileReverseMp4
+      : aboutStoryMobileMp4;
   const webmSource = isTablet
-    ? aboutStoryTabletWebm
-    : aboutStoryMobileWebm;
+    ? reversePlayback
+      ? aboutStoryTabletReverseWebm
+      : aboutStoryTabletWebm
+    : reversePlayback
+      ? aboutStoryMobileReverseWebm
+      : aboutStoryMobileWebm;
 
   return (
     <div
-      ref={trackRef}
-      className={`relative w-full bg-[var(--color-neutral-950-uniform)] ${
-        scrollScrubEnabled ? "h-[600svh]" : "h-[100svh]"
-      }`}
+      ref={stageRef}
+      className="relative h-[100svh] min-h-[600px] w-full overflow-hidden bg-[var(--color-neutral-950-uniform)]"
       data-about-responsive-story
-      data-about-video-scroll-track={scrollScrubEnabled ? "true" : "false"}
     >
-      <div className="sticky top-0 h-[100svh] w-full touch-pan-y overflow-hidden">
-        <img
-          src={aboutHero}
-          alt=""
+      <img
+        src={aboutHero}
+        alt=""
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 size-full max-w-none object-cover object-center"
+      />
+
+      {!showStaticAlternative && (
+        <video
+          key={`${isTablet ? "tablet" : "mobile"}-${playbackDirection ?? "idle"}`}
+          ref={videoRef}
+          className={`absolute inset-0 size-full object-cover object-center transition-opacity duration-300 ${
+            videoReady ? "opacity-100" : "opacity-0"
+          }`}
+          autoPlay={shouldPlay}
+          muted
+          playsInline
+          webkit-playsinline=""
+          poster={aboutHero}
+          preload={viewportEnabled ? "auto" : "none"}
+          onLoadedData={() => setVideoReady(true)}
+          onEnded={() => setVideoCompleted(true)}
+          onError={() => setVideoFailed(true)}
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 size-full max-w-none object-cover object-center"
-        />
+        >
+          <source src={mp4Source} type="video/mp4" />
+          <source src={webmSource} type="video/webm" />
+        </video>
+      )}
 
-        {!showStaticAlternative && (
-          <video
-            key={isTablet ? "tablet" : "mobile"}
-            ref={videoRef}
-            className={`absolute inset-0 size-full object-cover object-center transition-opacity duration-300 ${
-              videoReady ? "opacity-100" : "opacity-0"
-            }`}
-            muted
-            playsInline
-            webkit-playsinline=""
-            poster={aboutHero}
-            preload={viewportEnabled ? "auto" : "none"}
-            onLoadedData={() => setVideoReady(true)}
-            onError={() => setVideoFailed(true)}
-            aria-hidden="true"
-          >
-            <source src={webmSource} type="video/webm" />
-            <source src={mp4Source} type="video/mp4" />
-          </video>
-        )}
+      {showStaticAlternative && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/50 px-[16px]">
+          <p className="m-0 w-full max-w-[823px] break-words text-center font-[var(--font-sans)] text-[48px] font-bold leading-[58px] tracking-[-1px] text-[var(--color-neutral-100-uniform)] max-[767px]:text-[20px] max-[767px]:leading-[24px] max-[767px]:tracking-[-0.5px]">
+            {ABOUT_CONTENT.description}
+          </p>
+        </div>
+      )}
 
-        {showStaticAlternative && (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50 px-[16px]">
-            <p className="m-0 w-full max-w-[823px] break-words text-center font-[var(--font-sans)] text-[48px] font-bold leading-[58px] tracking-[-1px] text-[var(--color-neutral-100-uniform)] max-[767px]:text-[20px] max-[767px]:leading-[24px] max-[767px]:tracking-[-0.5px]">
-              {ABOUT_CONTENT.description}
-            </p>
-          </div>
-        )}
-
-        {!showStaticAlternative && (
-          <p className="sr-only">{ABOUT_CONTENT.description}</p>
-        )}
-      </div>
+      {!showStaticAlternative && (
+        <p className="sr-only">{ABOUT_CONTENT.description}</p>
+      )}
     </div>
   );
 }

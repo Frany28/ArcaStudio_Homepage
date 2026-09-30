@@ -33,19 +33,68 @@ test("responsive About video keeps inline muted playback and both source formats
   assert.match(source, /type="video\/webm"/);
   assert.match(source, /poster=\{aboutHero\}/);
   assert.match(source, /useReducedMotion\(\)/);
-  assert.match(source, /h-\[600svh\]/);
-  assert.match(source, /sticky top-0 h-\[100svh\]/);
-  assert.doesNotMatch(source, /autoPlay/);
+  assert.match(source, /autoPlay=\{shouldPlay\}/);
+  assert.match(source, /onEnded=\{\(\) => setVideoCompleted\(true\)\}/);
   assert.doesNotMatch(source, /\n\s+loop\n/);
 });
 
-test("responsive About scrubs with native scroll and owns no touch or wheel gestures", async () => {
+test("responsive About retries playback without taking ownership of scrolling", async () => {
   const source = await readSource(
-    "../src/pages/publicSite/about/utils/aboutVideoScroll.js",
+    "../src/pages/publicSite/about/utils/aboutVideoPlayback.js",
   );
 
-  assert.match(source, /scroller\.addEventListener\("scroll"/);
-  assert.match(source, /video\.currentTime = targetTime/);
+  for (const eventName of [
+    "canplay",
+    "loadeddata",
+    "loadedmetadata",
+    "touchstart",
+    "pointerdown",
+  ]) {
+    assert.match(source, new RegExp(`"${eventName}"`));
+  }
   assert.doesNotMatch(source, /preventDefault/);
-  assert.doesNotMatch(source, /"touchstart"|"touchmove"|"wheel"/);
+  assert.doesNotMatch(source, /"touchmove"|"wheel"/);
+});
+
+test("responsive About gates the active travel direction until video completion", async () => {
+  const componentSource = await readSource(
+    "../src/pages/publicSite/about/components/AboutResponsiveStory.jsx",
+  );
+  const gateSource = await readSource(
+    "../src/pages/publicSite/about/utils/aboutDirectionalScrollGate.js",
+  );
+
+  assert.match(componentSource, /connectAboutDirectionalScrollGate\(/);
+  assert.match(componentSource, /getAboutStoryEntryDirection\(stage\)/);
+  assert.match(componentSource, /playbackDirection/);
+  assert.match(componentSource, /!videoCompleted/);
+  assert.match(gateSource, /direction === "reverse"/);
+  assert.match(gateSource, /event\.deltaY < 0 : event\.deltaY > 0/);
+  assert.match(gateSource, /currentY > touchStartY/);
+  assert.match(gateSource, /currentY < touchStartY/);
+  assert.match(gateSource, /event\.preventDefault\(\)/);
+});
+
+test("responsive About uses dedicated reversed clips when entering from Contact", async () => {
+  const source = await readSource(
+    "../src/pages/publicSite/about/components/AboutResponsiveStory.jsx",
+  );
+
+  assert.match(source, /about-story-mobile-reverse\.mp4/);
+  assert.match(source, /about-story-mobile-reverse\.webm/);
+  assert.match(source, /about-story-tablet-reverse\.mp4/);
+  assert.match(source, /about-story-tablet-reverse\.webm/);
+  assert.match(source, /playbackDirection === "reverse"/);
+});
+
+test("responsive About restarts an unfinished video after leaving either way", async () => {
+  const source = await readSource(
+    "../src/pages/publicSite/about/components/AboutResponsiveStory.jsx",
+  );
+
+  assert.match(
+    source,
+    /video && leftStory && !videoCompleted/,
+  );
+  assert.match(source, /video\.pause\(\);[\s\S]*video\.currentTime = 0/);
 });
