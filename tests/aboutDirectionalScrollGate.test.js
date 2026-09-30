@@ -63,6 +63,14 @@ test("forward About gate blocks downward progress and allows upward exit", () =>
   scroller.listeners.wheel(createEvent(20));
   assert.equal(prevented, 1);
 
+  scroller.scrollTop = 260;
+  scroller.listeners.scroll();
+  assert.equal(scroller.scrollTop, 200);
+
+  scroller.scrollTop = 180;
+  scroller.listeners.scroll();
+  assert.equal(scroller.scrollTop, 180);
+
   scroller.listeners.touchstart({ touches: [{ clientY: 100 }] });
   scroller.listeners.touchmove({
     ...createEvent(0),
@@ -92,6 +100,14 @@ test("reverse About gate blocks upward progress and allows return to Contact", (
 
   scroller.listeners.wheel(createEvent(-20));
   assert.equal(prevented, 1);
+
+  scroller.scrollTop = 40;
+  scroller.listeners.scroll();
+  assert.equal(scroller.scrollTop, 100);
+
+  scroller.scrollTop = 130;
+  scroller.listeners.scroll();
+  assert.equal(scroller.scrollTop, 130);
 
   scroller.listeners.touchstart({ touches: [{ clientY: 100 }] });
   scroller.listeners.touchmove({

@@ -72,7 +72,10 @@ test("responsive About gates the active travel direction until video completion"
   assert.match(gateSource, /event\.deltaY < 0 : event\.deltaY > 0/);
   assert.match(gateSource, /currentY > touchStartY/);
   assert.match(gateSource, /currentY < touchStartY/);
+  assert.match(gateSource, /keepStoryAtBoundary/);
+  assert.match(gateSource, /addEventListener\("scroll"/);
   assert.match(gateSource, /event\.preventDefault\(\)/);
+  assert.match(componentSource, /useLayoutEffect/);
 });
 
 test("responsive About uses dedicated reversed clips when entering from Contact", async () => {

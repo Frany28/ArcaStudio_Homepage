@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -103,7 +104,7 @@ function AboutResponsiveStory() {
     return connectAboutVideoPlayback(video);
   }, [isTablet, shouldPlay]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const video = videoRef.current;
     const enteredStory = !wasInViewRef.current && inView;
     const leftStory = wasInViewRef.current && !inView;
@@ -133,7 +134,7 @@ function AboutResponsiveStory() {
     wasInViewRef.current = inView;
   }, [inView, videoCompleted]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const stage = stageRef.current;
     if (!stage || !shouldPlay) return undefined;
 

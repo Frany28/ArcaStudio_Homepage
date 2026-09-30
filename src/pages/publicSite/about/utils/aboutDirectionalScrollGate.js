@@ -62,10 +62,22 @@ function connectAboutDirectionalScrollGate(
   const stageTop =
     scroller.scrollTop + stageRect.top - scrollerRect.top;
 
+  const keepStoryAtBoundary = () => {
+    const crossedBoundary =
+      direction === "reverse"
+        ? scroller.scrollTop < stageTop - 1
+        : scroller.scrollTop > stageTop + 1;
+
+    if (crossedBoundary) scroller.scrollTop = stageTop;
+  };
+
   if (Math.abs(scroller.scrollTop - stageTop) > 1) {
     scroller.scrollTop = stageTop;
   }
 
+  scroller.addEventListener("scroll", keepStoryAtBoundary, {
+    passive: true,
+  });
   scroller.addEventListener("wheel", handleWheel, {
     passive: false,
     capture: true,
@@ -83,6 +95,7 @@ function connectAboutDirectionalScrollGate(
   windowTarget.addEventListener("blur", clearTouch);
 
   return () => {
+    scroller.removeEventListener("scroll", keepStoryAtBoundary);
     scroller.removeEventListener("wheel", handleWheel, true);
     scroller.removeEventListener("touchstart", handleTouchStart, true);
     scroller.removeEventListener("touchmove", handleTouchMove, true);
