@@ -59,6 +59,11 @@ const STATEMENT_PROGRESS_EPSILON = 0.0015;
  */
 const STATEMENT_MAX_FRAME_DELTA_MS = 32;
 
+/**
+ * Controla el progreso del manifiesto para wheel, teclado y dispositivos touch.
+ * Suaviza la entrada en frames y mantiene sincronizadas la animación visual y
+ * la fase de navegación declarativa.
+ */
 function createHomeStatementController({
   animation = gsap,
   cancelFrame = (frameId) => window.cancelAnimationFrame(frameId),

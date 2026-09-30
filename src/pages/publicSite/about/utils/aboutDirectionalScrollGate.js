@@ -1,3 +1,4 @@
+/** Determina desde qué extremo entra el usuario a la historia de Sobre nosotros. */
 function getAboutStoryEntryDirection(stage) {
   const scroller = stage.closest("[data-home-scroll-container]");
   if (!scroller) return "forward";
@@ -8,6 +9,10 @@ function getAboutStoryEntryDirection(stage) {
   return stageTop < scrollerTop ? "reverse" : "forward";
 }
 
+/**
+ * Retiene temporalmente el scroll en el límite de la historia mientras su
+ * animación controlada consume el gesto en la dirección de entrada.
+ */
 function connectAboutDirectionalScrollGate(
   stage,
   direction,

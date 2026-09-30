@@ -5,6 +5,10 @@ import { useReducedMotion } from "motion/react";
 const CATEGORY_CROSSFADE_DURATION = 0.2;
 const AUTO_ROTATE_INTERVAL = 2000;
 
+/**
+ * Coordina la selección manual y rotación automática de las categorías.
+ * También mantiene el indicador alineado después de cambios de tamaño o fuente.
+ */
 function useServicesCategoryScroll(
   sectionRef,
   layoutRef,

@@ -4,6 +4,7 @@ import FeaturedProjectsProjectPanel, {
 } from "./FeaturedProjectsProjectPanel.jsx";
 import SectionTitleReveal from "../../components/SectionTitleReveal.jsx";
 
+/** Ensambla los proyectos destacados en el orden de la narrativa vertical. */
 function FeaturedProjectsSection({
   active = false,
   activeProjectIndex = 0,

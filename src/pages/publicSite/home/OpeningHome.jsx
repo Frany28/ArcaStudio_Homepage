@@ -20,6 +20,11 @@ import { HOME_PRELOAD_IMAGES } from "./homeContent.js";
 const PANEL_TRANSITION_DURATION_SECONDS = 1.15;
 const PANEL_TRANSITION_EASE = [0.815, 0.005, 0.17, 0.995];
 
+/**
+ * Compone la página pública y conecta cada sección con la narrativa global.
+ * Mantiene la pantalla de apertura separada hasta que los recursos críticos y
+ * el primer título están listos para permitir la interacción.
+ */
 function OpeningHome() {
   const reduceMotion = useReducedMotion();
   const { hash } = useLocation();

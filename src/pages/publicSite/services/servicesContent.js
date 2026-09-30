@@ -6,6 +6,7 @@ import remodelingDesignImage from "../../../assets/services/remodeling-design.we
 import interiorDesignImage from "../../../assets/services/interior-design.webp";
 import constructionManagementImage from "../../../assets/services/construction-management.webp";
 
+/** Encabezado editorial de la sección Servicios. */
 const SERVICES_HEADING = Object.freeze({
   eyebrow: "Servicios",
   title: "Soluciones adaptadas a cada proyecto.",
@@ -17,6 +18,7 @@ const SERVICES_HEADING = Object.freeze({
     "Diseñamos, planificamos y desarrollamos espacios funcionales, estéticos y técnicamente bien ejecutados, ajustándonos a las necesidades de cada cliente.",
 });
 
+/** Catálogo visual de servicios mostrado por el selector animado. */
 const SERVICES_CATEGORIES = Object.freeze([
   Object.freeze({
     id: "residential",

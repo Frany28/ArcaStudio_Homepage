@@ -15,6 +15,11 @@ function clamp(value) {
   return Math.min(Math.max(value, 0), 1);
 }
 
+/**
+ * Convierte el desplazamiento controlado en progreso de la historia de About.
+ * Fija los extremos durante la inercia y permite resincronizar el progreso
+ * cuando una navegación externa salta por encima de la narrativa.
+ */
 function createAboutStoryController({
   coordination,
   progress,
@@ -381,4 +386,4 @@ function createAboutStoryController({
   };
 }
 
-export { createAboutStoryController };  
+export { createAboutStoryController };

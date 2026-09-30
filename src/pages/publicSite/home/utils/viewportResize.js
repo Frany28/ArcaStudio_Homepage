@@ -1,3 +1,8 @@
+/**
+ * Clasificación de redimensionados del viewport.
+ * Distingue un cambio real de layout del movimiento transitorio de la barra
+ * del navegador móvil, evitando recalcular geometría durante cada gesto.
+ */
 const VIEWPORT_RESIZE_EPSILON_PX = 1;
 
 const VIEWPORT_RESIZE_KINDS = Object.freeze({

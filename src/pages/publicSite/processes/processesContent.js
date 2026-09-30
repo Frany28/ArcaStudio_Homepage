@@ -17,6 +17,7 @@ import materialSelectionWebm from "../../../assets/processes/process-08-material
 import siteCleanupPoster from "../../../assets/processes/process-09-site-cleanup-poster.webp";
 import siteCleanupWebm from "../../../assets/processes/process-09-site-cleanup.webm";
 
+/** Encabezado editorial de la sección Procesos. */
 const PROCESSES_HEADING = {
   eyebrow: "Nuestros Procesos",
   title: "Un proceso claro desde el primer contacto.",
@@ -24,6 +25,7 @@ const PROCESSES_HEADING = {
     "Cada proyecto refleja una colaboración construida sobre comunicación, confianza y atención al detalle.",
 };
 
+/** Secuencia audiovisual que documenta las etapas del trabajo en obra. */
 const PROCESS_VIDEOS = [
   {
     id: "brick-facade",

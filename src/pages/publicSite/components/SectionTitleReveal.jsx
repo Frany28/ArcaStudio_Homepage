@@ -2,6 +2,10 @@ import { useRef } from "react";
 import { motion as Motion, useInView, useReducedMotion } from "motion/react";
 import { getSectionRevealClip, getSectionRevealTransition } from "../utils/sectionReveal.js";
 
+/**
+ * Revela el encabezado de una sección al entrar al viewport o cuando un
+ * controlador externo solicita su visibilidad.
+ */
 export default function SectionTitleReveal({
   children,
   enabled = true,

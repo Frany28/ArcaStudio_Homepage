@@ -5,6 +5,7 @@ import { HOME_IMAGE_PANELS, HOME_STATEMENT } from "../homeContent.js";
 
 const SCROLL_HINT_VARIANTS = ["centered", "edge"];
 
+/** Renderiza los paneles introductorios y proyecta el estado de navegación. */
 function HomeSections({
   active,
   mediaEnabled = active,

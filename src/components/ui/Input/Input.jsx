@@ -345,6 +345,11 @@ function normalizeTagItem(tag, fallbackId) {
   };
 }
 
+/**
+ * Campo unificado del sistema visual. Adapta estructura y comportamiento para
+ * texto, contraseña, teléfono, búsqueda y selección de etiquetas sin perder la
+ * asociación accesible entre label, control y mensaje de ayuda.
+ */
 function Input({
   className,
   id,

@@ -6,6 +6,7 @@ import {
   SERVICES_HEADING,
 } from "../servicesContent.js";
 
+/** Presenta el catálogo de servicios con selección y rotación sincronizadas. */
 function ServicesSection({
   active = false,
   titleVisible = false,

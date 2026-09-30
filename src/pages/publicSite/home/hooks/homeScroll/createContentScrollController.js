@@ -15,6 +15,7 @@ import {
   STATEMENT_PANEL_INDEX,
 } from "./homeScrollConstants.js";
 
+/** Comprueba la intersección vertical de un elemento con el viewport interno. */
 function isVisibleWithinViewport(elementRect, viewportRect) {
   return (
     elementRect.bottom > viewportRect.top &&
@@ -22,6 +23,7 @@ function isVisibleWithinViewport(elementRect, viewportRect) {
   );
 }
 
+/** Determina cuándo la introducción ya puede ceder el control al contenido. */
 function isContentNavigationReady({
   contentMode,
   currentState,
@@ -40,6 +42,7 @@ function isContentNavigationReady({
   );
 }
 
+/** Conserva la continuidad al regresar desde Procesos a Proyectos destacados. */
 function shouldReturnToLastFeaturedProject({
   activeSectionId,
   targetSectionId,
@@ -50,6 +53,7 @@ function shouldReturnToLastFeaturedProject({
   );
 }
 
+/** Evita que eventos nativos compitan con la revelación automática activa. */
 function isAutomaticStatementScrollOwned({
   currentState,
   autoRevealing = false,
@@ -60,6 +64,10 @@ function isAutomaticStatementScrollOwned({
   );
 }
 
+/**
+ * Sincroniza el scroll físico con la sección activa, títulos visibles y navbar.
+ * También resuelve navegación directa, hashes, resize y arrastre de scrollbar.
+ */
 function createContentScrollController({
   activeSectionRef,
   contentModeRef,

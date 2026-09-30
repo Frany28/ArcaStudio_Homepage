@@ -7,6 +7,7 @@ import {
   BUTTON_VISUALS,
 } from "./buttonConfig.js";
 
+/** Protege enlaces externos abiertos en una pestaña nueva. */
 function getSafeLinkRel(target, rel) {
   if (target !== "_blank") return rel;
 
@@ -22,6 +23,10 @@ function getSafeLinkRel(target, rel) {
   return [...tokens].join(" ");
 }
 
+/**
+ * Botón base del sistema visual. Puede renderizar un botón nativo o un enlace,
+ * conserva los estados accesibles y añade tooltip cuando solo muestra un icono.
+ */
 function Button({
   className,
   children = "Button",

@@ -1,3 +1,4 @@
+/** Copia editorial de la sección Sobre nosotros. */
 const ABOUT_CONTENT = {
   eyebrow: "Sobre Nosotros",
   title: [

@@ -38,6 +38,11 @@ const INITIAL_NAVIGATION_STATE = createHomeScrollState();
 
 gsap.registerPlugin(ScrollToPlugin);
 
+/**
+ * Orquestador principal de la experiencia de scroll de Inicio.
+ * Compone controladores especializados y expone a React únicamente el estado
+ * visual que necesitan las secciones, manteniendo la lógica imperativa aislada.
+ */
 function useHomeScrollController({
   enabled,
   initialScrollReady,

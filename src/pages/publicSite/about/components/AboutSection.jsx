@@ -5,6 +5,7 @@ import { ABOUT_CONTENT } from "../aboutContent.js";
 import AboutResponsiveStory from "./AboutResponsiveStory.jsx";
 import AboutStory from "./AboutStory.jsx";
 
+/** Compone la introducción editorial y la historia animada del estudio. */
 function AboutSection({
   titleVisible = false,
   progress,

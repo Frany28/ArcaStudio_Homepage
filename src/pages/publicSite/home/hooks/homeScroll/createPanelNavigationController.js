@@ -13,6 +13,11 @@ import {
 
 const STATEMENT_ENTRY_DURATION_SECONDS = 1;
 
+/**
+ * Crea el controlador de transiciones entre paneles introductorios.
+ * Es el único responsable de alinear el contenedor mediante GSAP y de liberar
+ * los bloqueos de entrada cuando una transición programática termina.
+ */
 function createPanelNavigationController({
   coordination,
   navigationStateRef,

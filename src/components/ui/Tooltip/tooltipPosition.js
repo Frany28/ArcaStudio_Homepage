@@ -1,3 +1,4 @@
+/** Calcula la corrección necesaria para mantener el tooltip dentro del viewport. */
 export function getTooltipViewportOffset({
   bottom,
   left,
@@ -55,6 +56,9 @@ function getPositionForSide(side, preferredPosition) {
   return `${side} ${alignment}`;
 }
 
+/**
+ * Elige la posición preferida, su opuesta o el lado con más espacio disponible.
+ */
 export function getAdaptiveTooltipPosition({
   anchorBottom,
   anchorLeft,

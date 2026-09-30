@@ -10,6 +10,7 @@ import {
 } from "../contactContent.js";
 import ContactTiltCard from "./ContactTiltCard.jsx";
 
+/** Cierre del sitio con CTA, canales sociales y navegación secundaria. */
 function ContactSection({ onNavigate }) {
   const navigationLabels = CONTACT_NAVIGATION_ITEMS.map((item) => item.label);
 

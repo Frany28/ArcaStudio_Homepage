@@ -5,6 +5,10 @@ function normalizeCountryCode(countryCode) {
   return String(countryCode ?? "").trim().toUpperCase();
 }
 
+/**
+ * Representa una bandera circular y usa las iniciales del país como fallback
+ * accesible cuando el recurso SVG externo no puede cargarse.
+ */
 function Flag({
   countryCode,
   size = "var(--size-flag)",

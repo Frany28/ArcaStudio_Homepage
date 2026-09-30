@@ -18,6 +18,7 @@ import {
   WHEEL_GESTURE_THRESHOLD_PX,
 } from "./homeScrollConstants.js";
 
+/** Define si el último proyecto debe activarse antes de volver desde Procesos. */
 function shouldActivateIncomingFeaturedBeforeTransition({
   activeSectionId,
   featuredProjectIndex,
@@ -32,6 +33,7 @@ function shouldActivateIncomingFeaturedBeforeTransition({
   );
 }
 
+/** Indica si un proyecto entrante debe preparar su estado antes de animarse. */
 function shouldActivateIncomingProjectBeforeTransition({
   deferStateCommit = false,
   direction = 0,
@@ -39,6 +41,7 @@ function shouldActivateIncomingProjectBeforeTransition({
   return deferStateCommit && direction < 0;
 }
 
+/** Detecta layouts móviles con capacidad táctil real. */
 function isTouchCapableMobileLayout({
   anyPointerCoarse = false,
   matchesMobileWidth = false,
@@ -55,6 +58,7 @@ function isTouchCapableMobileLayout({
   );
 }
 
+/** Identifica Android combinando las señales disponibles del navegador. */
 function isAndroidTouchPlatform({
   platform = "",
   userAgent = "",
@@ -62,6 +66,7 @@ function isAndroidTouchPlatform({
   return /android/i.test(`${platform} ${userAgent}`);
 }
 
+/** Decide cuándo liberar inmediatamente un límite para evitar rebotes móviles. */
 function shouldUseImmediateMobileBoundaryRelease({
   direction = 0,
   isAndroidTouchLayout = false,
@@ -69,6 +74,7 @@ function shouldUseImmediateMobileBoundaryRelease({
   return direction < 0 || (direction > 0 && isAndroidTouchLayout);
 }
 
+/** Detecta si el scroll nativo cruzó el inicio o final de un proyecto. */
 function getNativeBoundaryCrossingDirection(
   previousScrollTop,
   scrollTop,
@@ -102,6 +108,11 @@ function getNativeBoundaryCrossingDirection(
   return 0;
 }
 
+/**
+ * Gestiona la expansión de galerías y la transición entre proyectos destacados.
+ * Separa las diferencias de desktop y touch para que el orquestador principal
+ * trabaje con una interfaz única.
+ */
 function createFeaturedProjectsController({
   activeFeaturedProjectIndexRef,
   activeSectionRef,

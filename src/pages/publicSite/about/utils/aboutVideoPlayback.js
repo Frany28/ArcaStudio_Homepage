@@ -1,3 +1,7 @@
+/**
+ * Mantiene el video de la historia sincronizado con la visibilidad del documento.
+ * Devuelve una función de limpieza para retirar todos los listeners instalados.
+ */
 function connectAboutVideoPlayback(
   video,
   {
@@ -9,6 +13,7 @@ function connectAboutVideoPlayback(
 ) {
   let connected = true;
 
+  // Safari/iOS necesita estos atributos antes de cada intento de reproducción.
   const applyInlinePlaybackAttributes = () => {
     video.defaultMuted = true;
     video.muted = true;

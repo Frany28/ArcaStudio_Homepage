@@ -5,6 +5,7 @@ import statementVideoMp4Asset from "../../../assets/home/arca-statement-bg.mp4";
 import statementVideoWebmAsset from "../../../assets/home/arca-statement-bg.webm";
 import statementPosterAsset from "../../../assets/home/arca-statement-poster.webp";
 
+/** Contenido y recursos de la narrativa inicial, en su orden de aparición. */
 const HOME_IMAGE_PANELS = Object.freeze([
   {
     captionDescriptionNodeId: "4681:2313",
@@ -44,6 +45,7 @@ const HOME_PRELOAD_IMAGES = Object.freeze(
   HOME_IMAGE_PANELS.map(({ image }) => image),
 );
 
+/** Recursos y mensaje del panel final de la introducción. */
 const HOME_STATEMENT = Object.freeze({
   mp4Source: statementVideoMp4Asset,
   phrase: "Piénsalo y lo hacemos realidad.",

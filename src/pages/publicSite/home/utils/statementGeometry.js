@@ -1,11 +1,16 @@
 import { VIEWPORT_RESIZE_KINDS } from "./viewportResize.js";
 
+/**
+ * Medición y actualización segura de la máscara tipográfica del manifiesto.
+ * Incluye alternativas para diferencias de geometría SVG entre navegadores.
+ */
 const STATEMENT_GEOMETRY_SETTLE_MS = 180;
 
 function shouldDeferStatementGeometryResize(resizeKind) {
   return resizeKind === VIEWPORT_RESIZE_KINDS.TRANSIENT_MOBILE_HEIGHT;
 }
 
+/** Valida que una medición SVG pueda utilizarse para enfocar la animación. */
 function isUsableStatementBounds(bounds) {
   return Boolean(
     bounds &&
@@ -18,6 +23,7 @@ function isUsableStatementBounds(bounds) {
   );
 }
 
+/** Ejecuta una lectura de geometría sin propagar errores del motor SVG. */
 function readStatementBounds(readBounds) {
   if (typeof readBounds !== "function") return null;
 
@@ -29,6 +35,7 @@ function readStatementBounds(readBounds) {
   }
 }
 
+/** Obtiene el área de enfoque usando la medición más fiable disponible. */
 function getStatementFocusBounds({
   focusGlyph,
   focusLetterIndex = -1,
@@ -62,6 +69,7 @@ function getStatementFocusBounds({
   return readStatementBounds(() => maskText.getBBox());
 }
 
+/** Indica si es seguro recalcular geometría sin interrumpir la animación. */
 function isStatementGeometrySettled({
   animationHasProgressed = false,
   effectStarted = false,
@@ -72,6 +80,10 @@ function isStatementGeometrySettled({
   return progress <= 0 && animationHasProgressed;
 }
 
+/**
+ * Crea una cola que agrupa redimensionados y ejecuta una sola medición cuando
+ * el efecto llega a un estado estable.
+ */
 function createStatementGeometryRefreshQueue({
   cancelFrame,
   clearTimer,

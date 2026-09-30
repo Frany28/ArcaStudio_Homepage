@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 const REDUCED_MOTION_DURATION_MS = 450;
 const MAX_LOADING_DURATION_MS = 15000;
 
+/** Precarga una imagen sin bloquear la apertura si el recurso falla. */
 function preloadImage(source) {
   return new Promise((resolve) => {
     const image = new Image();
@@ -16,6 +17,10 @@ function preloadImage(source) {
   });
 }
 
+/**
+ * Gestiona las fases de apertura, precarga de recursos y habilitación del scroll.
+ * Siempre aplica una duración mínima y un tiempo máximo de espera.
+ */
 function useHomeOpeningSequence({
   imageSources,
   motionDurationSeconds,

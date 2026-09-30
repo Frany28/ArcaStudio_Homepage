@@ -1,3 +1,7 @@
+/**
+ * Conecta el video del manifiesto con el estado visual de su panel.
+ * Los listeners de interacción permiten reintentar el autoplay bloqueado en móvil.
+ */
 function connectStatementPlayback(
   video,
   {

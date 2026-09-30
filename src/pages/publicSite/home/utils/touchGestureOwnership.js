@@ -1,3 +1,7 @@
+/**
+ * Reglas de propiedad para gestos táctiles en la página de inicio.
+ * Cada gesto pertenece al navegador o a la narrativa controlada, nunca a ambos.
+ */
 const TOUCH_GESTURE_OWNERS = Object.freeze({
   CONTROLLED_VERTICAL: "CONTROLLED_VERTICAL",
   NATIVE_VERTICAL: "NATIVE_VERTICAL",
@@ -8,6 +12,7 @@ function clearTouchGestureForPointer(gesture, pointerId) {
   return gesture?.pointerId === pointerId ? null : gesture;
 }
 
+/** Resuelve quién debe consumir el gesto según el modo y el objetivo tocado. */
 function getTouchGestureOwner({
   contentMode,
   featuredProjectReady = false,

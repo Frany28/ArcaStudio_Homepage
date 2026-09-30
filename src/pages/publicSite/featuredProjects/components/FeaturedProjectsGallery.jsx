@@ -97,6 +97,10 @@ function FeaturedProjectsGalleryCard({
   );
 }
 
+/**
+ * Galería responsiva que pasa de composición bento a carrusel continuo según
+ * el viewport y el progreso proporcionado por el controlador de Inicio.
+ */
 function FeaturedProjectsGallery({
   active = false,
   backgroundClassName = "bg-[var(--color-primary-500-uniform)]",

@@ -1,3 +1,8 @@
+/**
+ * Modelo puro de navegación para la introducción de la página de inicio.
+ * Convierte entradas de wheel, teclado y touch en estados deterministas sin
+ * acceder al DOM; los controladores se encargan después de animar esos estados.
+ */
 const HOME_SCROLL_PHASES = Object.freeze({
   IMAGE: "image",
   TITLE: "title",
@@ -29,6 +34,7 @@ function clampHomeStatementProgress(progress) {
   return Math.min(Math.max(progress, 0), 1);
 }
 
+/** Calcula el recorrido del manifiesto dentro de límites cómodos por viewport. */
 function getHomeStatementTravelDistance(viewportHeight) {
   const safeViewportHeight = Number.isFinite(viewportHeight)
     ? viewportHeight
@@ -43,6 +49,7 @@ function getHomeStatementTravelDistance(viewportHeight) {
   );
 }
 
+/** Traduce un delta vertical en progreso normalizado del manifiesto. */
 function advanceHomeStatementProgress(
   progress,
   deltaY,
@@ -64,6 +71,7 @@ function advanceHomeStatementProgress(
   );
 }
 
+/** Limita picos de wheel para que un solo evento no salte la animación. */
 function limitHomeStatementWheelDelta(
   deltaY,
   limit = STATEMENT_WHEEL_DELTA_LIMIT_PX,
@@ -80,6 +88,7 @@ function clampFeaturedExpansionProgress(progress) {
   return Math.min(Math.max(progress, 0), 1);
 }
 
+/** Calcula el recorrido necesario para expandir una galería destacada. */
 function getFeaturedExpansionTravelDistance(viewportHeight) {
   const safeViewportHeight = Number.isFinite(viewportHeight)
     ? viewportHeight
@@ -105,6 +114,7 @@ function advanceFeaturedExpansionProgress(
   );
 }
 
+/** Deriva opacidad y escala de la máscara a partir del progreso del efecto. */
 function getHomeStatementVisualState(progress) {
   const normalizedProgress = clampHomeStatementProgress(progress);
 
@@ -120,6 +130,7 @@ function getHomeStatementVisualState(progress) {
   };
 }
 
+/** Construye la transformación CSS centrada en la letra de enfoque. */
 function getHomeStatementTransform(progress, anchorX, anchorY) {
   const { maskScale } = getHomeStatementVisualState(progress);
   const safeAnchorX = Number.isFinite(anchorX) ? anchorX : 0;
@@ -132,6 +143,7 @@ function getHomeStatementTransform(progress, anchorX, anchorY) {
   };
 }
 
+/** Crea el acumulador utilizado para diferenciar wheel y trackpad. */
 function createWheelGestureState() {
   return {
     accumulator: 0,
@@ -148,6 +160,7 @@ function createWheelGestureState() {
   };
 }
 
+/** Reinicia el acumulador cuando termina el gesto físico actual. */
 function markWheelGestureIdle() {
   /*
    * Historical calibration restored from 2026-09-04:
@@ -158,6 +171,7 @@ function markWheelGestureIdle() {
   return createWheelGestureState();
 }
 
+/** Consume la inercia restante sin convertirla en una segunda navegación. */
 function consumeWheelGesture(state, deltaY, eventTime = 0) {
   const currentState = state ?? createWheelGestureState();
   const direction = deltaY >= 0
@@ -181,6 +195,10 @@ function consumeWheelGesture(state, deltaY, eventTime = 0) {
   };
 }
 
+/**
+ * Actualiza la curva del gesto y comunica cuándo existe un impulso nuevo y
+ * deliberado que puede avanzar la narrativa.
+ */
 function advanceWheelGesture(
   state,
   deltaY,
@@ -271,6 +289,7 @@ function advanceWheelGesture(
   };
 }
 
+/** Crea un estado válido para un panel y una fase de la introducción. */
 function createHomeScrollState({
   panelIndex = 0,
   phase = HOME_SCROLL_PHASES.TITLE,
@@ -279,6 +298,7 @@ function createHomeScrollState({
   return { panelIndex, phase, entryDirection };
 }
 
+/** Resuelve la siguiente fase o panel para una dirección de navegación. */
 function getNextHomeScrollState(
   state,
   direction,
@@ -316,6 +336,7 @@ function getNextHomeScrollState(
   });
 }
 
+/** Representa un panel alcanzado mediante la barra de desplazamiento. */
 function createScrollbarHomeScrollState(panelIndex, { settled = true } = {}) {
   return createHomeScrollState({
     panelIndex,
@@ -324,6 +345,7 @@ function createScrollbarHomeScrollState(panelIndex, { settled = true } = {}) {
   });
 }
 
+/** Normaliza deltas expresados en píxeles, líneas o páginas. */
 function normalizeWheelDelta({ deltaX = 0, deltaY = 0, deltaMode = 0 }, viewportHeight) {
   const multiplier =
     deltaMode === 1
@@ -338,6 +360,7 @@ function normalizeWheelDelta({ deltaX = 0, deltaY = 0, deltaMode = 0 }, viewport
   };
 }
 
+/** Reduce la sensibilidad de señales continuas típicas de un trackpad. */
 function getWheelGestureDeltaScale({ deltaY = 0, deltaMode = 0 }) {
   if (
     deltaMode === 0 &&
@@ -350,6 +373,7 @@ function getWheelGestureDeltaScale({ deltaY = 0, deltaMode = 0 }) {
   return 1;
 }
 
+/** Devuelve la dirección de un swipe vertical deliberado. */
 function getSwipeDirection(
   { startX, startY, endX, endY },
   { threshold = 48, verticalDominance = 1.2 } = {},
@@ -369,6 +393,7 @@ function getSwipeDirection(
     : HOME_SCROLL_DIRECTIONS.UP;
 }
 
+/** Mapea las teclas de navegación a la dirección de la narrativa. */
 function getKeyboardDirection({ key, shiftKey = false }) {
   if (key === "ArrowDown" || key === "PageDown" || (key === " " && !shiftKey)) {
     return HOME_SCROLL_DIRECTIONS.DOWN;
@@ -381,6 +406,7 @@ function getKeyboardDirection({ key, shiftKey = false }) {
   return null;
 }
 
+/** Encuentra el panel físicamente más cercano a una posición de scroll. */
 function getNearestPanelIndex(scrollTop, panelOffsets) {
   if (!Array.isArray(panelOffsets) || panelOffsets.length === 0) {
     return 0;
@@ -394,6 +420,7 @@ function getNearestPanelIndex(scrollTop, panelOffsets) {
   0);
 }
 
+/** Limita la barra a un panel adyacente para conservar la secuencia narrativa. */
 function getSequentialScrollbarPanelIndex(
   currentPanelIndex,
   requestedPanelIndex,

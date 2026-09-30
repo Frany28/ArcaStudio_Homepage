@@ -1,3 +1,4 @@
+/** Enlaces internos que se repiten en la navegación del pie de página. */
 const CONTACT_NAVIGATION_ITEMS = [
   { id: "services", label: "Servicios" },
   { id: "featured-projects", label: "Proyectos destacados" },
@@ -5,6 +6,7 @@ const CONTACT_NAVIGATION_ITEMS = [
   { id: "about", label: "Sobre nosotros" },
 ];
 
+/** Canales oficiales utilizados por los CTA y redes sociales. */
 const CONTACT_EXTERNAL_LINKS = Object.freeze({
   whatsapp: "https://wa.me/584246674832",
   instagram: "https://www.instagram.com/arcastudioarq/",
@@ -39,6 +41,7 @@ const CONTACT_SOCIAL_ITEMS = Object.freeze([
   },
 ]);
 
+/** Copia editorial del cierre y llamada a la acción. */
 const CONTACT_CONTENT = {
   title: "Hagamos realidad tu próximo proyecto.",
   description:

@@ -26,6 +26,7 @@ import {
   WHEEL_VERTICAL_DOMINANCE,
 } from "./homeScrollConstants.js";
 
+/** Identifica controles que deben conservar su interacción nativa. */
 function isInteractiveTarget(target) {
   return (
     target instanceof Element &&
@@ -35,6 +36,7 @@ function isInteractiveTarget(target) {
   );
 }
 
+/** Detecta regiones que poseen explícitamente el desplazamiento horizontal. */
 function isNativeHorizontalTarget(target) {
   return (
     target instanceof Element &&
@@ -42,6 +44,7 @@ function isNativeHorizontalTarget(target) {
   );
 }
 
+/** Detecta overlays, como el menú móvil, que bloquean la narrativa de fondo. */
 function isInputBlockedTarget(target) {
   return (
     target instanceof Element &&
@@ -52,6 +55,10 @@ function isInputBlockedTarget(target) {
 const FEATURED_TOUCH_SWIPE_THRESHOLD_PX = 18;
 const FEATURED_TOUCH_UP_BOUNDARY_THRESHOLD_PX = 10;
 
+/**
+ * Decide si un gesto ascendente debe cruzar el límite de un proyecto en vez
+ * de continuar como scroll nativo dentro de su contenido.
+ */
 function shouldClaimTouchUpBoundary({
   boundaryScrollTop,
   currentX,
@@ -97,6 +104,11 @@ function shouldClaimTouchUpBoundary({
   );
 }
 
+/**
+ * Unifica wheel, trackpad, teclado, pointer y touch en una sola capa de entrada.
+ * Delega la acción al controlador dueño del estado actual y conserva los
+ * gestos nativos sobre controles y carruseles horizontales.
+ */
 function createInputGestureController({
   titleRevealLockedRef,
   activeFeaturedProjectIndexRef,

@@ -208,6 +208,10 @@ function TooltipBubble({
   );
 }
 
+/**
+ * Tooltip accesible para mouse, teclado y pulsación larga en touch.
+ * Se monta en un portal y reajusta su lado para no salir del viewport.
+ */
 function Tooltip({
   asChild = false,
   className,

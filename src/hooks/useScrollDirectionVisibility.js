@@ -8,6 +8,7 @@ gsap.registerPlugin(ScrollTrigger);
 const NAVBAR_SCROLL_DURATION_SECONDS = 0.2;
 const SCROLLABLE_OVERFLOW_PATTERN = /(auto|scroll|overlay)/;
 
+/** Busca el primer ancestro que actúa como contenedor vertical de scroll. */
 function getClosestScrollContainer(element) {
   let ancestor = element?.parentElement;
 
@@ -20,6 +21,10 @@ function getClosestScrollContainer(element) {
   return window;
 }
 
+/**
+ * Oculta el elemento al avanzar y lo recupera al retroceder o recibir foco.
+ * Observa tanto el scroll real como la intención de wheel, teclado y touch.
+ */
 function useScrollDirectionVisibility(
   targetRef,
   { disabled = false, scrollContainerRef } = {},

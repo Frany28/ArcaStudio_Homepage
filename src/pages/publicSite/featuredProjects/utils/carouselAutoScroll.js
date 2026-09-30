@@ -1,3 +1,7 @@
+/**
+ * Utilidades puras del carrusel infinito de proyectos.
+ * Normalizan tiempo, posición y propiedad del gesto entre mouse y touch.
+ */
 const CAROUSEL_AXIS_THRESHOLD_PX = 12;
 const CAROUSEL_AXIS_BIAS = 1.4;
 const CAROUSEL_DRAG_RESPONSE = 0.42;
@@ -18,6 +22,7 @@ function canResumeCarouselAutoScroll({
   return !interactionActive && scrollSettled;
 }
 
+/** Suaviza el arrastre de manera independiente de la frecuencia de refresco. */
 function smoothCarouselDragPosition(
   currentPosition,
   targetPosition,
@@ -46,6 +51,7 @@ function smoothCarouselDragPosition(
   return current + (target - current) * blend;
 }
 
+/** Calcula el siguiente desplazamiento automático y lo mantiene dentro del loop. */
 function advanceCarouselAutoPosition(
   currentPosition,
   elapsedSeconds,
@@ -72,6 +78,7 @@ function advanceCarouselAutoPosition(
   return nextPosition;
 }
 
+/** Clasifica un gesto solo después de superar el umbral y resolver su eje dominante. */
 function resolveCarouselGestureAxis(
   deltaX,
   deltaY,
@@ -102,6 +109,7 @@ function resolveCarouselGestureAxis(
   return null;
 }
 
+/** Convierte cualquier posición, incluida una negativa, a un punto válido del loop. */
 function normalizeCarouselLoopPosition(position, loopDistance) {
   if (
     !Number.isFinite(position) ||

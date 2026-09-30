@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createBackgroundSampler, getBackgroundAppearance } from "./headerContrast.js";
 
+/** Muestrea periódicamente el fondo visible para elegir el contraste del header. */
 export default function useHeaderBackground(headerRef, scrollContainerRef) {
   const [appearance, setAppearance] = useState("dark");
 

@@ -5,6 +5,7 @@ import { PROCESSES_HEADING, PROCESS_VIDEOS } from "../processesContent.js";
 import ProcessesVideoGrid from "./ProcessesVideoGrid.jsx";
 import ProcessesVideoModal from "./ProcessesVideoModal.jsx";
 
+/** Presenta los procesos en una cuadrícula y administra su modal de video. */
 function ProcessesSection({ active = false, titleVisible = false }) {
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [videoOrigin, setVideoOrigin] = useState(null);

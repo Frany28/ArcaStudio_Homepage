@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 const STORAGE_KEY = "arca-theme";
 
+/** Lee únicamente valores de tema válidos guardados por la aplicación. */
 function getStoredTheme() {
   if (typeof window === "undefined") {
     return null;
@@ -27,6 +28,10 @@ function getInitialTheme() {
   return getStoredTheme() ?? getSystemTheme();
 }
 
+/**
+ * Sincroniza la clase raíz con el tema persistido o la preferencia del sistema.
+ * No renderiza interfaz: su responsabilidad es mantener el documento actualizado.
+ */
 function ThemeSync() {
   const [theme, setTheme] = useState(getInitialTheme);
 

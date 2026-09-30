@@ -7,6 +7,7 @@ import ThemeSync from "./components/ui/ThemeSync.jsx";
 import "@fontsource-variable/inter";
 import "./index.css";
 
+// Punto de entrada: instala el router, sincroniza el tema y monta la aplicación.
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <BrowserRouter basename={import.meta.env.BASE_URL}>

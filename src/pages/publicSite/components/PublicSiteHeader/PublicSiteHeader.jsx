@@ -21,6 +21,10 @@ const DEFAULT_NAVIGATION_ITEMS = [
 
 const MOBILE_MENU_ID = "public-site-mobile-menu";
 
+/**
+ * Encabezado responsivo del sitio público. Mantiene sincronizados la navegación,
+ * el contraste sobre fondos multimedia y el ciclo de foco del menú móvil.
+ */
 function PublicSiteHeader({
   activeNavigationId,
   className,
