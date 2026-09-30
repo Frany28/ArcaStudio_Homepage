@@ -1,6 +1,6 @@
 # ARCA Studio
 
-git remote set-url origin https://github.com/DevFrany/ArcaStudioLandingPage.git
+Pagina Web: https://arcastudio2025.com
 
 ## Propósito del repositorio
 
