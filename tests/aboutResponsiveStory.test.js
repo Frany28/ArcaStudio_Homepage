@@ -35,6 +35,10 @@ test("responsive About video keeps inline muted playback and both source formats
   assert.match(source, /useReducedMotion\(\)/);
   assert.match(source, /autoPlay=\{shouldPlay\}/);
   assert.match(source, /onEnded=\{\(\) => setVideoCompleted\(true\)\}/);
+  assert.match(source, /onCanPlay=\{\(\) => setVideoReady\(true\)\}/);
+  assert.match(source, /onPlaying=/);
+  assert.match(source, /Reproducir video/);
+  assert.match(source, /playbackBlocked && shouldPlay/);
   assert.doesNotMatch(source, /\n\s+loop\n/);
 });
 
@@ -54,6 +58,8 @@ test("responsive About retries playback without taking ownership of scrolling", 
   }
   assert.doesNotMatch(source, /preventDefault/);
   assert.doesNotMatch(source, /"touchmove"|"wheel"/);
+  assert.match(source, /onPlaybackBlocked/);
+  assert.match(source, /onPlaybackStarted/);
 });
 
 test("responsive About gates the active travel direction until video completion", async () => {

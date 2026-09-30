@@ -50,6 +50,7 @@ function AboutResponsiveStory() {
   const [videoFailed, setVideoFailed] = useState(false);
   const [videoCompleted, setVideoCompleted] = useState(false);
   const [videoReady, setVideoReady] = useState(false);
+  const [playbackBlocked, setPlaybackBlocked] = useState(false);
   const [playbackDirection, setPlaybackDirection] = useState(null);
 
   useEffect(() => {
@@ -82,6 +83,7 @@ function AboutResponsiveStory() {
     setVideoFailed(false);
     setVideoCompleted(false);
     setVideoReady(false);
+    setPlaybackBlocked(false);
   }, [isTablet]);
 
   const shouldPlay =
@@ -101,7 +103,13 @@ function AboutResponsiveStory() {
       return undefined;
     }
 
-    return connectAboutVideoPlayback(video);
+    return connectAboutVideoPlayback(video, {
+      onPlaybackBlocked: () => setPlaybackBlocked(true),
+      onPlaybackStarted: () => {
+        setPlaybackBlocked(false);
+        setVideoReady(true);
+      },
+    });
   }, [isTablet, shouldPlay]);
 
   useLayoutEffect(() => {
@@ -116,6 +124,7 @@ function AboutResponsiveStory() {
       );
       setVideoCompleted(false);
       setVideoReady(false);
+      setPlaybackBlocked(false);
     }
 
     if (video && leftStory && !videoCompleted) {
@@ -187,7 +196,12 @@ function AboutResponsiveStory() {
           webkit-playsinline=""
           poster={aboutHero}
           preload={viewportEnabled ? "auto" : "none"}
+          onCanPlay={() => setVideoReady(true)}
           onLoadedData={() => setVideoReady(true)}
+          onPlaying={() => {
+            setPlaybackBlocked(false);
+            setVideoReady(true);
+          }}
           onEnded={() => setVideoCompleted(true)}
           onError={() => setVideoFailed(true)}
           aria-hidden="true"
@@ -195,6 +209,33 @@ function AboutResponsiveStory() {
           <source src={mp4Source} type="video/mp4" />
           <source src={webmSource} type="video/webm" />
         </video>
+      )}
+
+      {playbackBlocked && shouldPlay && (
+        <button
+          type="button"
+          className="absolute inset-x-0 bottom-[32px] z-10 mx-auto w-fit rounded-full bg-white px-[20px] py-[12px] font-[var(--font-sans)] text-[16px] font-semibold text-black shadow-lg"
+          onClick={() => {
+            const video = videoRef.current;
+            if (!video) return;
+
+            video.defaultMuted = true;
+            video.muted = true;
+            video.setAttribute("playsinline", "");
+            video.setAttribute("webkit-playsinline", "");
+
+            try {
+              video.play()?.then(
+                () => setPlaybackBlocked(false),
+                () => setPlaybackBlocked(true),
+              );
+            } catch {
+              setPlaybackBlocked(true);
+            }
+          }}
+        >
+          Reproducir video
+        </button>
       )}
 
       {showStaticAlternative && (

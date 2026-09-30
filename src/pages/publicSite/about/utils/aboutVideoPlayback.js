@@ -3,8 +3,12 @@ function connectAboutVideoPlayback(
   {
     documentTarget = document,
     interactionTarget = documentTarget,
+    onPlaybackBlocked = () => {},
+    onPlaybackStarted = () => {},
   } = {},
 ) {
+  let connected = true;
+
   const applyInlinePlaybackAttributes = () => {
     video.defaultMuted = true;
     video.muted = true;
@@ -16,7 +20,20 @@ function connectAboutVideoPlayback(
     if (documentTarget.hidden) return;
 
     applyInlinePlaybackAttributes();
-    video.play()?.catch(() => undefined);
+
+    try {
+      const playback = video.play();
+      playback?.then(
+        () => {
+          if (connected) onPlaybackStarted();
+        },
+        () => {
+          if (connected) onPlaybackBlocked();
+        },
+      );
+    } catch {
+      if (connected) onPlaybackBlocked();
+    }
   };
 
   const synchronizeVisibility = () => {
@@ -42,6 +59,7 @@ function connectAboutVideoPlayback(
   play();
 
   return () => {
+    connected = false;
     mediaEvents.forEach((eventName) => {
       video.removeEventListener(eventName, play);
     });
