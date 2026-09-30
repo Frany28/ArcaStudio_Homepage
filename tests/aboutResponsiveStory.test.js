@@ -39,6 +39,10 @@ test("responsive About video keeps inline muted playback and both source formats
   assert.match(source, /onPlaying=/);
   assert.match(source, /Reproducir video/);
   assert.match(source, /playbackBlocked && shouldPlay/);
+  assert.match(
+    source,
+    /<video[\s\S]*className=\{`pointer-events-none/,
+  );
   assert.doesNotMatch(source, /\n\s+loop\n/);
 });
 

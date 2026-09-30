@@ -202,7 +202,7 @@ function AboutResponsiveStory() {
         <video
           key={`${isTablet ? "tablet" : "mobile"}-${playbackDirection ?? "idle"}`}
           ref={videoRef}
-          className={`absolute inset-0 size-full object-cover object-center transition-opacity duration-300 ${
+          className={`pointer-events-none absolute inset-0 size-full object-cover object-center transition-opacity duration-300 ${
             videoReady ? "opacity-100" : "opacity-0"
           }`}
           autoPlay={shouldPlay}
