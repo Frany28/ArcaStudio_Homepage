@@ -40,8 +40,12 @@ function AboutResponsiveStory() {
   const stageRef = useRef(null);
   const videoRef = useRef(null);
   const wasInViewRef = useRef(false);
+  const wasStoryPresentRef = useRef(false);
   const inView = useInView(stageRef, {
     amount: 0.9,
+  });
+  const storyPresent = useInView(stageRef, {
+    amount: 0.01,
   });
   const [isTablet, setIsTablet] = useState(getInitialTabletMatch);
   const [viewportEnabled, setViewportEnabled] = useState(
@@ -113,11 +117,9 @@ function AboutResponsiveStory() {
   }, [isTablet, shouldPlay]);
 
   useLayoutEffect(() => {
-    const video = videoRef.current;
     const enteredStory = !wasInViewRef.current && inView;
-    const leftStory = wasInViewRef.current && !inView;
 
-    if (enteredStory) {
+    if (enteredStory && playbackDirection === null) {
       const stage = stageRef.current;
       setPlaybackDirection(
         stage ? getAboutStoryEntryDirection(stage) : "forward",
@@ -127,21 +129,34 @@ function AboutResponsiveStory() {
       setPlaybackBlocked(false);
     }
 
-    if (video && leftStory && !videoCompleted) {
-      video.pause();
+    wasInViewRef.current = inView;
+  }, [inView, playbackDirection]);
 
-      try {
-        video.currentTime = 0;
-      } catch {
-        // Safari can reject seeking until metadata is ready. Playback still
-        // starts from the beginning when no current time was established.
+  useLayoutEffect(() => {
+    const abandonedStory =
+      wasStoryPresentRef.current && !storyPresent;
+
+    if (abandonedStory) {
+      const video = videoRef.current;
+      video?.pause();
+
+      if (video && !videoCompleted) {
+        try {
+          video.currentTime = 0;
+        } catch {
+          // Safari can reject seeking until metadata is ready. The remounted
+          // video still starts at zero on the next full visit.
+        }
       }
+
+      setPlaybackDirection(null);
+      setVideoCompleted(false);
+      setVideoReady(false);
+      setPlaybackBlocked(false);
     }
 
-    if (leftStory) setPlaybackDirection(null);
-
-    wasInViewRef.current = inView;
-  }, [inView, videoCompleted]);
+    wasStoryPresentRef.current = storyPresent;
+  }, [storyPresent, videoCompleted]);
 
   useLayoutEffect(() => {
     const stage = stageRef.current;

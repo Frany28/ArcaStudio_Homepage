@@ -96,14 +96,15 @@ test("responsive About uses dedicated reversed clips when entering from Contact"
   assert.match(source, /playbackDirection === "reverse"/);
 });
 
-test("responsive About restarts an unfinished video after leaving either way", async () => {
+test("responsive About resets only after the story is actually abandoned", async () => {
   const source = await readSource(
     "../src/pages/publicSite/about/components/AboutResponsiveStory.jsx",
   );
 
-  assert.match(
-    source,
-    /video && leftStory && !videoCompleted/,
-  );
-  assert.match(source, /video\.pause\(\);[\s\S]*video\.currentTime = 0/);
+  assert.match(source, /amount: 0\.01/);
+  assert.match(source, /wasStoryPresentRef\.current && !storyPresent/);
+  assert.match(source, /enteredStory && playbackDirection === null/);
+  assert.match(source, /video && !videoCompleted/);
+  assert.match(source, /video\.currentTime = 0/);
+  assert.doesNotMatch(source, /leftStory/);
 });
