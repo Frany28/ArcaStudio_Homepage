@@ -26,7 +26,6 @@ test("responsive About video keeps inline muted playback and both source formats
     "../src/pages/publicSite/about/components/AboutResponsiveStory.jsx",
   );
 
-  assert.match(source, /autoPlay=\{shouldPlay\}/);
   assert.match(source, /\n\s+muted\n/);
   assert.match(source, /\n\s+playsInline\n/);
   assert.match(source, /webkit-playsinline=""/);
@@ -34,20 +33,19 @@ test("responsive About video keeps inline muted playback and both source formats
   assert.match(source, /type="video\/webm"/);
   assert.match(source, /poster=\{aboutHero\}/);
   assert.match(source, /useReducedMotion\(\)/);
+  assert.match(source, /h-\[600svh\]/);
+  assert.match(source, /sticky top-0 h-\[100svh\]/);
+  assert.doesNotMatch(source, /autoPlay/);
+  assert.doesNotMatch(source, /\n\s+loop\n/);
 });
 
-test("responsive About playback retries media readiness and first interaction", async () => {
+test("responsive About scrubs with native scroll and owns no touch or wheel gestures", async () => {
   const source = await readSource(
-    "../src/pages/publicSite/about/utils/aboutVideoPlayback.js",
+    "../src/pages/publicSite/about/utils/aboutVideoScroll.js",
   );
 
-  for (const eventName of [
-    "canplay",
-    "loadeddata",
-    "loadedmetadata",
-    "touchstart",
-    "pointerdown",
-  ]) {
-    assert.match(source, new RegExp(`"${eventName}"`));
-  }
+  assert.match(source, /scroller\.addEventListener\("scroll"/);
+  assert.match(source, /video\.currentTime = targetTime/);
+  assert.doesNotMatch(source, /preventDefault/);
+  assert.doesNotMatch(source, /"touchstart"|"touchmove"|"wheel"/);
 });

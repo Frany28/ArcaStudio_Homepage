@@ -4,7 +4,6 @@ import {
   useState,
 } from "react";
 import {
-  useInView,
   useReducedMotion,
 } from "motion/react";
 
@@ -14,7 +13,7 @@ import aboutStoryMobileWebm from "../../../../assets/about/about-story-mobile.we
 import aboutStoryTabletMp4 from "../../../../assets/about/about-story-tablet.mp4";
 import aboutStoryTabletWebm from "../../../../assets/about/about-story-tablet.webm";
 import { ABOUT_CONTENT } from "../aboutContent.js";
-import { connectAboutVideoPlayback } from "../utils/aboutVideoPlayback.js";
+import { connectAboutVideoScroll } from "../utils/aboutVideoScroll.js";
 
 function getInitialTabletMatch() {
   return typeof window !== "undefined" &&
@@ -28,12 +27,8 @@ function getInitialResponsiveViewportMatch() {
 
 function AboutResponsiveStory() {
   const reduceMotion = useReducedMotion();
-  const stageRef = useRef(null);
+  const trackRef = useRef(null);
   const videoRef = useRef(null);
-  const inView = useInView(stageRef, {
-    amount: 0.1,
-    margin: "100px 0px",
-  });
   const [isTablet, setIsTablet] = useState(getInitialTabletMatch);
   const [viewportEnabled, setViewportEnabled] = useState(
     getInitialResponsiveViewportMatch,
@@ -72,20 +67,19 @@ function AboutResponsiveStory() {
     setVideoReady(false);
   }, [isTablet]);
 
-  const shouldPlay =
-    viewportEnabled && inView && !reduceMotion && !videoFailed;
+  const scrollScrubEnabled =
+    viewportEnabled && !reduceMotion && !videoFailed;
 
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return undefined;
-
-    if (!shouldPlay) {
-      video.pause();
+    const track = trackRef.current;
+    if (!video || !track || !scrollScrubEnabled) {
+      video?.pause();
       return undefined;
     }
 
-    return connectAboutVideoPlayback(video);
-  }, [isTablet, shouldPlay]);
+    return connectAboutVideoScroll(video, track);
+  }, [isTablet, scrollScrubEnabled]);
 
   const showStaticAlternative = reduceMotion || videoFailed;
   const mp4Source = isTablet
@@ -97,51 +91,54 @@ function AboutResponsiveStory() {
 
   return (
     <div
-      ref={stageRef}
-      className="relative h-[100svh] min-h-[600px] w-full overflow-hidden bg-[var(--color-neutral-950-uniform)]"
+      ref={trackRef}
+      className={`relative w-full bg-[var(--color-neutral-950-uniform)] ${
+        scrollScrubEnabled ? "h-[600svh]" : "h-[100svh]"
+      }`}
       data-about-responsive-story
+      data-about-video-scroll-track={scrollScrubEnabled ? "true" : "false"}
     >
-      <img
-        src={aboutHero}
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 size-full max-w-none object-cover object-center"
-      />
-
-      {!showStaticAlternative && (
-        <video
-          key={isTablet ? "tablet" : "mobile"}
-          ref={videoRef}
-          className={`absolute inset-0 size-full object-cover object-center transition-opacity duration-300 ${
-            videoReady ? "opacity-100" : "opacity-0"
-          }`}
-          autoPlay={shouldPlay}
-          muted
-          loop
-          playsInline
-          webkit-playsinline=""
-          poster={aboutHero}
-          preload={viewportEnabled ? "auto" : "none"}
-          onLoadedData={() => setVideoReady(true)}
-          onError={() => setVideoFailed(true)}
+      <div className="sticky top-0 h-[100svh] w-full touch-pan-y overflow-hidden">
+        <img
+          src={aboutHero}
+          alt=""
           aria-hidden="true"
-        >
-          <source src={mp4Source} type="video/mp4" />
-          <source src={webmSource} type="video/webm" />
-        </video>
-      )}
+          className="pointer-events-none absolute inset-0 size-full max-w-none object-cover object-center"
+        />
 
-      {showStaticAlternative && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/50 px-[16px]">
-          <p className="m-0 w-full max-w-[823px] break-words text-center font-[var(--font-sans)] text-[48px] font-bold leading-[58px] tracking-[-1px] text-[var(--color-neutral-100-uniform)] max-[767px]:text-[20px] max-[767px]:leading-[24px] max-[767px]:tracking-[-0.5px]">
-            {ABOUT_CONTENT.description}
-          </p>
-        </div>
-      )}
+        {!showStaticAlternative && (
+          <video
+            key={isTablet ? "tablet" : "mobile"}
+            ref={videoRef}
+            className={`absolute inset-0 size-full object-cover object-center transition-opacity duration-300 ${
+              videoReady ? "opacity-100" : "opacity-0"
+            }`}
+            muted
+            playsInline
+            webkit-playsinline=""
+            poster={aboutHero}
+            preload={viewportEnabled ? "auto" : "none"}
+            onLoadedData={() => setVideoReady(true)}
+            onError={() => setVideoFailed(true)}
+            aria-hidden="true"
+          >
+            <source src={webmSource} type="video/webm" />
+            <source src={mp4Source} type="video/mp4" />
+          </video>
+        )}
 
-      {!showStaticAlternative && (
-        <p className="sr-only">{ABOUT_CONTENT.description}</p>
-      )}
+        {showStaticAlternative && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/50 px-[16px]">
+            <p className="m-0 w-full max-w-[823px] break-words text-center font-[var(--font-sans)] text-[48px] font-bold leading-[58px] tracking-[-1px] text-[var(--color-neutral-100-uniform)] max-[767px]:text-[20px] max-[767px]:leading-[24px] max-[767px]:tracking-[-0.5px]">
+              {ABOUT_CONTENT.description}
+            </p>
+          </div>
+        )}
+
+        {!showStaticAlternative && (
+          <p className="sr-only">{ABOUT_CONTENT.description}</p>
+        )}
+      </div>
     </div>
   );
 }
