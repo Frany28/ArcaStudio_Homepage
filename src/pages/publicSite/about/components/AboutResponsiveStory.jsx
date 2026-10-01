@@ -221,8 +221,8 @@ function AboutResponsiveStory() {
           onError={() => setVideoFailed(true)}
           aria-hidden="true"
         >
-          <source src={mp4Source} type="video/mp4" />
           <source src={webmSource} type="video/webm" />
+          <source src={mp4Source} type="video/mp4" />
         </video>
       )}
 
