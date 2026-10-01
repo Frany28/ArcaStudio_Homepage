@@ -97,4 +97,8 @@ El sitio está preparado para desplegarse en Netlify. La plataforma ejecuta `npm
 
 ---
 
+<<<<<<< HEAD
 **ARCA Studio** — *Piénsalo y lo hacemos realidad.*
+=======
+**ARCA Studio** — *Piénsalo y lo hacemos realidad.*
+>>>>>>> b5c0cdfc7670beb404450c944b7eedb2e4c9528b
