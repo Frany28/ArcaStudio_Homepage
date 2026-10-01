@@ -2,6 +2,7 @@ import SectionTitleReveal from "../../components/SectionTitleReveal.jsx";
 import aboutHero from "../../../../assets/about/about-hero.webp";
 
 import { ABOUT_CONTENT } from "../aboutContent.js";
+import AboutResponsiveStory from "./AboutResponsiveStory.jsx";
 import AboutStory from "./AboutStory.jsx";
 
 function AboutSection({
@@ -79,27 +80,8 @@ function AboutSection({
         />
       </div>
 
-      <div
-        className="flex w-full flex-col items-center gap-[48px] min-[1025px]:hidden"
-        data-node-id="5136:15319"
-      >
-        <div
-          className="relative aspect-[4096/2731] w-full shrink-0"
-          data-node-id="5136:15077"
-        >
-          <img
-            src={aboutHero}
-            alt=""
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 size-full max-w-none object-cover object-bottom"
-          />
-        </div>
-
-        <div className="flex w-full max-w-[640px] items-center justify-center px-[16px] py-[48px]" data-node-id="5136:15320">
-          <p className="m-0 w-full break-words text-center text-[20px] font-bold leading-[24px] tracking-[-0.5px] text-[var(--color-neutral-100-uniform)] opacity-60" data-node-id="5136:15318">
-            {ABOUT_CONTENT.description}
-          </p>
-        </div>
+      <div className="w-full min-[1025px]:hidden">
+        <AboutResponsiveStory />
       </div>
     </section>
   );
